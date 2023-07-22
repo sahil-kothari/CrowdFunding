@@ -32,7 +32,7 @@ const Sidebar = () => {
         <div className="flex flex-col justify-center items-center gap-3">
             {navlinks.map((link)=>(
                 <Icon 
-                    key={Link.name}
+                    key={link.name}
                     {...link}
                     isActive={isActive}
                     handleClick={()=>{
