@@ -1,4 +1,5 @@
 import React, { useContext, createContext } from 'react';
+import axios from 'axios';
 import { useAddress, useContract, useMetamask, useContractWrite } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import { EditionMetadataWithOwnerOutputSchema } from '@thirdweb-dev/sdk';
@@ -82,6 +83,64 @@ export const StateContextProvider = ({ children }) => {
   }
 
 
+    const API_KEY="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";
+    const fetchData = async (input) => {
+        const response = await axios.post(
+          "https://api.openai.com/v1/completions",
+          {
+            prompt: `Rephrase this sentence: "${input}"`,
+            model: 'text-davinci-003',
+            max_tokens: 50,
+            n: 1,
+            stop: ".",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${API_KEY}`,
+            },
+          }
+        );
+      
+        return response.data.choices[0].text;
+      };
+
+      const query=async(data)=> {
+        const response = await fetch(
+          "https://api-inference.huggingface.co/models/christinacdl/BERT_Offensive_English_Twitter",
+          {
+            headers: { Authorization: "Bearer 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" },
+            method: "POST",
+            body: JSON.stringify(data),
+          }
+        );
+        const result = await response.json();
+        return result;
+      }
+      // Hate-speech-CNERG/dehatebert-mono-english
+      const query1=async(data)=> {
+        const response = await fetch(
+          "https://api-inference.huggingface.co/models/Hate-speech-CNERG/dehatebert-mono-english",
+          {
+            headers: { Authorization: "Bearer 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" },
+            method: "POST",
+            body: JSON.stringify(data),
+          }
+        );
+        const result = await response.json();
+        return result;
+      }
+      
+      // query({"inputs": "I like you. I love you"}).then((response) => {
+      //   console.log(JSON.stringify(response));
+      // });
+
+
+      // query({"inputs": "I like you. I love you"}).then((response) => {
+      //   console.log(JSON.stringify(response));
+      // });
+
+
   return (
     <StateContext.Provider
       value={{ 
@@ -92,7 +151,10 @@ export const StateContextProvider = ({ children }) => {
         getCampaigns,
         getUserCampaigns,
         donate,
-        getDonations
+        getDonations,
+        fetchData,
+        query,
+        query1
       }}
     >
       {children}
@@ -101,3 +163,4 @@ export const StateContextProvider = ({ children }) => {
 }
 
 export const useStateContext = () => useContext(StateContext);
+

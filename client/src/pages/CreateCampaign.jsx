@@ -6,12 +6,13 @@ import { CustomButton ,Loader} from '../components';
 import { useStateContext } from '../context';
 import {FormField} from '../components';
 import {checkIfImage} from '../utils';
+import axios from 'axios';
 
 const CreateCampaign = () => {
 
   const navigate=useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const {createCampaign} =useStateContext();
+  const {createCampaign,fetchData,query,query1} =useStateContext();
   const [form, setForm] = useState({
     name:'',
     title:'',
@@ -30,11 +31,66 @@ const CreateCampaign = () => {
     // console.log(form);
     checkIfImage(form.image,async(exists)=>{
       if(exists){
-        setIsLoading(true);
-        await createCampaign({...form, target:ethers.utils.parseUnits(form.target,18)});
         
-        setIsLoading(false);
-        navigate('/');
+        //this part is working with python flask backend;
+        // try{
+        //   const response = await axios.post('http://127.0.0.1:5000/detect', {
+        //     campaignDescription: form.description
+        //   }); 
+
+        //   if(response['data']=='Yes'){
+            
+        //     console.log("hate speech detected!!");
+        //   }
+        //   else{
+        //     console.log(response['data']);
+        //     console.log("No hate speech detected");
+        //   }
+        // }
+        // catch(error){
+        //   console.log(`Error faced in detection ${error}`);
+        // }
+
+
+        // query1({"inputs": form.title}).then((response) => {
+        //   console.log(JSON.stringify(response));
+        // });
+
+        
+        await query1({"inputs": form.description}).then(async (response) => {
+          console.log(response[0][0]);
+          if(response[0]['0']['label']==='HATE'){
+
+            alert("The description that you have added is offensive...you cannot proceed");
+            navigate('/');
+            
+          }
+          else{ 
+                // console.log(`ye dikhra kya ${parseFloat(response[0]['1']['score'])}`);
+                if(parseFloat(response[0]['1']['score'])>=0.2){
+                  alert("The description that you have added is offensive...you cannot proceed");
+                  navigate('/');
+                  
+                }else{
+                  setIsLoading(true);
+                  await createCampaign({...form, target:ethers.utils.parseUnits(form.target,18)});
+                  setIsLoading(false);
+                  navigate('/');
+                }
+          }
+          
+          
+          
+          // if(response[0][1]['label']==='NOT'){
+          //   console.log(`This is Not offensive at all ${response[0][1]['score']}`);
+          // }
+          // else{
+          //   console.log(`This is Offensive ${response[0][1]['score']}`);
+          // }
+        });
+
+        
+        
       }
       else{
         alert('Provide Valid Image URL')
