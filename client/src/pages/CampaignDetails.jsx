@@ -286,7 +286,7 @@ const CampaignDetails = () => {
                 <p className="mt-[20px] font-epilogue font-normal leading-[22px] text-[#808191]">Support the project for no reward, just because it speaks to you.</p>
               </div>
               
-              {state.target>state.amountCollected ? 
+              {(state.target>state.amountCollected && parseInt(remainingDays)) ? 
               
               
                 (<CustomButton 
@@ -298,8 +298,9 @@ const CampaignDetails = () => {
 
                 :
                 (
+                  
                   <div className="my-[20px] p-4 bg-[#13131a] rounded-[10px]">
-                    <h4 className="font-epilogue font-semibold text-[14px] leading-[22px] text-white">The Campaign has already raised the target amount.</h4>
+                    <h4 className="font-epilogue font-semibold text-[14px] leading-[22px] text-white">The Campaign has either ENDED or has already raised the target amount.</h4>
                     <p className="mt-[20px] font-epilogue font-normal leading-[22px] text-[#19fe07]">Thank You All for your support!! </p>
                   </div>
                 )
