@@ -56,19 +56,50 @@ const CreateCampaign = () => {
         //   console.log(JSON.stringify(response));
         // });
 
+        await query1({"inputs": form.title}).then(async (response) => {
+          console.log(response[0][0]);
+          if(response[0]['0']['label']==='HATE'){
+
+            alert("The title that you have entered is offensive...you cannot proceed!!");
+            navigate('/');
+            
+          }
+          else{ 
+                
+                if(parseFloat(response[0]['1']['score'])>=0.2){
+                  alert("The title that you have entered is offensive...you cannot proceed!!");
+                  navigate('/');
+                  
+                }else{
+                  setIsLoading(true);
+                  await createCampaign({...form, target:ethers.utils.parseUnits(form.target,18)});
+                  setIsLoading(false);
+                  navigate('/');
+                }
+          }
+          
+          
+          
+          // if(response[0][1]['label']==='NOT'){
+          //   console.log(`This is Not offensive at all ${response[0][1]['score']}`);
+          // }
+          // else{
+          //   console.log(`This is Offensive ${response[0][1]['score']}`);
+          // }
+        });
         
         await query1({"inputs": form.description}).then(async (response) => {
           console.log(response[0][0]);
           if(response[0]['0']['label']==='HATE'){
 
-            alert("The description that you have added is offensive...you cannot proceed");
+            alert("The description that you have entered is offensive...you cannot proceed");
             navigate('/');
             
           }
           else{ 
-                // console.log(`ye dikhra kya ${parseFloat(response[0]['1']['score'])}`);
+                
                 if(parseFloat(response[0]['1']['score'])>=0.2){
-                  alert("The description that you have added is offensive...you cannot proceed");
+                  alert("The description that you have entered is offensive...you cannot proceed");
                   navigate('/');
                   
                 }else{
