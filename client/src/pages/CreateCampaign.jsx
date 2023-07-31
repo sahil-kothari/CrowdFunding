@@ -55,73 +55,54 @@ const CreateCampaign = () => {
         // query1({"inputs": form.title}).then((response) => {
         //   console.log(JSON.stringify(response));
         // });
+        try{
 
-        await query1({"inputs": form.title}).then(async (response) => {
-          console.log(response[0][0]);
-          if(response[0]['0']['label']==='HATE'){
-
-            alert("The title that you have entered is offensive...you cannot proceed!!");
-            navigate('/');
-            
-          }
-          else{ 
-                
-                if(parseFloat(response[0]['1']['score'])>=0.2){
-                  alert("The title that you have entered is offensive...you cannot proceed!!");
-                  navigate('/');
+          await query1({"inputs": form.title}).then(async (response) => {
+            if(response[0]['0']['label']==='HATE'){
+              
+              alert("The title that you have entered is offensive...you cannot proceed!!");
+              navigate('/');
+              
+            }
+            else{ 
                   
-                }else{
-                  setIsLoading(true);
-                  await createCampaign({...form, target:ethers.utils.parseUnits(form.target,18)});
-                  setIsLoading(false);
-                  navigate('/');
-                }
-          }
-          
-          
-          
-          // if(response[0][1]['label']==='NOT'){
-          //   console.log(`This is Not offensive at all ${response[0][1]['score']}`);
-          // }
-          // else{
-          //   console.log(`This is Offensive ${response[0][1]['score']}`);
-          // }
-        });
-        
-        await query1({"inputs": form.description}).then(async (response) => {
-          console.log(response[0][0]);
-          if(response[0]['0']['label']==='HATE'){
-
-            alert("The description that you have entered is offensive...you cannot proceed");
-            navigate('/');
+                  if(parseFloat(response[0]['1']['score'])>=0.2){
+                    
+                    alert("The title that you have entered is offensive...you cannot proceed!!");
+                    navigate('/');
+                    
+                  }else{
+                    await query1({"inputs": form.description}).then(async (response) => {
+                      if(response[0]['0']['label']==='HATE'){
             
-          }
-          else{ 
-                
-                if(parseFloat(response[0]['1']['score'])>=0.2){
-                  alert("The description that you have entered is offensive...you cannot proceed");
-                  navigate('/');
-                  
-                }else{
-                  setIsLoading(true);
-                  await createCampaign({...form, target:ethers.utils.parseUnits(form.target,18)});
-                  setIsLoading(false);
-                  navigate('/');
-                }
-          }
+                        alert("The description that you have entered is offensive...you cannot proceed");
+                        navigate('/');
+                        
+                      }
+                      else{ 
+                            
+                            if(parseFloat(response[0]['1']['score'])>=0.2){
+                              alert("The description that you have entered is offensive...you cannot proceed");
+                              navigate('/');
+                              
+                            }else{
+                              setIsLoading(true);
+                              await createCampaign({...form, target:ethers.utils.parseUnits(form.target,18)});
+                              setIsLoading(false);
+                              navigate('/');
+                            }
+                      }
+              
+                    });      
+                  }
+            }
           
-          
-          
-          // if(response[0][1]['label']==='NOT'){
-          //   console.log(`This is Not offensive at all ${response[0][1]['score']}`);
-          // }
-          // else{
-          //   console.log(`This is Offensive ${response[0][1]['score']}`);
-          // }
-        });
-
-        
-        
+          });
+        }
+        catch(error){
+          alert('There was some error, Please try again.');
+          navigate('/');
+        }
       }
       else{
         alert('Provide Valid Image URL')
